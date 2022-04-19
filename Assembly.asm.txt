@@ -1,0 +1,326 @@
+.data
+	formatScanf: .asciz "%[^\n]"
+	formatPrintfd: .asciz "%d "
+	space: .asciz " "
+	N: .space 4
+	M: .space 4
+	
+	ok: .long 0
+	x: .space 4
+	i: .space 4
+	return: .space 4
+	k: .space 4
+	j: .space 4
+	delim: .asciz " "
+	primulnr: .space 4
+	res: .space 4
+	numar: .space 4
+	indexf: .space 4
+	comparatie: .space 4
+	endl: .asciz "\n"
+	formatPrintfs: .asciz "%s"
+	
+	v: .space 1000	
+	v1: .space 1000
+	a: .space 1000
+	fr: .space 100
+	
+.text
+
+verif:
+	pushl %ebp
+	movl %esp, %ebp
+	movl 8(%ebp), %eax
+	
+	lea fr, %esi
+	lea a, %edi
+	
+	movl (%edi, %eax, 4), %ecx		
+	movl %ecx, comparatie			# in comparatie avem a[k]
+	movl (%esi, %ecx, 4), %ebx		# in %ebx avem fr[a[k]]
+	cmp $2, %ebx
+	jg et_retrau
+	
+	movl $1, %ecx				# pregatim j-ul
+	
+et_forverif:
+	movl 8(%ebp), %eax
+	cmp M, %ecx
+	jg et_retbun
+	
+	movl %eax, %ebx
+	subl %ecx, %ebx			# (k-j >=0)
+	cmp $0, %ebx
+	jl comp_adunj
+	
+	movl (%edi, %ebx, 4), %edx	
+	cmp comparatie, %edx			# (a[k-j]==a[k])
+	je et_retrau
+	 
+comp_adunj:
+	movl 8(%ebp), %eax
+	movl %eax, %ebx
+	addl %ecx, %ebx
+	cmp x, %ebx
+	jge et_incrementj
+	
+	lea v1, %esi
+	movl (%esi, %ebx, 4), %edx
+	cmp comparatie, %edx
+	je et_retrau
+
+et_incrementj:
+	
+	incl %ecx
+	jmp et_forverif	 
+
+et_retbun:
+	movl $1, %eax
+	popl %ebp
+	ret
+
+et_retrau:
+	movl $0, %eax
+	popl %ebp
+	ret
+afisare:
+	pushl %ebp
+	movl %esp, %ebp
+	
+	lea a, %esi
+	movl $0, %ecx
+	
+   et_forafis:
+
+	cmp x, %ecx
+	je iesire
+	movl (%esi, %ecx, 4), %eax
+	
+	pushl %ecx
+	pushl %eax
+	pushl $formatPrintfd
+	call printf
+	popl %ebx
+	popl %ebx
+	popl %ecx
+	
+	incl %ecx
+	
+	jmp et_forafis
+	
+iesire:
+
+	pushl $endl
+	pushl $formatPrintfs
+	call printf
+	popl %ebx
+	popl %ebx
+
+	popl %ebp
+	ret
+	
+bkt:
+	pushl %ebp
+	movl %esp, %ebp
+	movl 8(%ebp), %eax
+	
+	movl ok, %ebx
+	cmp $0, %ebx					# aici compar ok cu 0
+	jne et_bktret
+	
+	cmp x, %eax
+	je et_acol1
+	
+	lea v1, %esi
+	movl (%esi, %eax, 4), %ebx 			# aici am v[k]
+	cmp $0, %ebx
+	jne et_punctfix
+	
+	movl $1, %ecx
+
+et_forbkt:
+	cmp N, %ecx
+	jg et_bktret
+	
+	movl 8(%ebp), %eax
+	lea a, %edi
+	movl %ecx, (%edi, %eax, 4)
+	pushl %ecx
+	pushl %eax
+	call verif
+	popl %ebx
+	popl %ecx
+	
+	cmp $0, %eax
+	je et_crestei
+	
+	lea fr, %esi
+	movl (%esi, %ecx, 4), %ebx
+	incl %ebx
+	movl %ebx, (%esi, %ecx, 4)
+	
+	movl 8(%ebp), %eax
+	incl %eax
+	pushl %ecx
+	pushl %eax
+	call bkt
+	popl %eax
+	popl %ecx
+	movl 8(%ebp), %eax
+	
+	lea v1, %edi
+	movl (%edi, %eax, 4), %ebx
+	cmp $0, %ebx
+	je et_frecvmin
+	
+	jmp et_crestei
+	
+et_frecvmin:
+	lea fr, %esi
+	movl (%esi, %ecx, 4), %ebx
+	decl %ebx
+	movl %ebx, (%esi, %ecx, 4)
+	jmp et_crestei
+		
+et_crestei:
+	incl %ecx
+	jmp et_forbkt
+	
+et_punctfix:
+	lea a, %edi
+	movl %ebx, (%edi, %eax, 4)
+	incl %eax
+	pushl %edx
+	pushl %ecx
+	pushl %eax					# a[k]=v[k]
+	call bkt					# bkt(k+1)
+	popl %eax
+	popl %ecx
+	popl %edx
+	decl %eax
+	
+	jmp et_bktret
+	
+et_acol1:
+	movl $1, %ebx
+	movl %ebx, ok
+	call afisare
+	jmp et_bktret
+	
+et_bktret:
+	popl %ebp
+	ret
+	
+.global main
+
+main:	
+
+	#citire vector
+	pushl $v
+	pushl $formatScanf
+	call scanf
+	popl %ebx
+	popl %ebx
+	
+	pushl $delim
+	pushl $v
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	lea v1, %edi
+	
+	movl %eax, res
+	pushl res
+	call atoi
+	popl %ebx
+	
+et1:
+
+	#primul element este N
+	movl %eax, N
+	movl $3, %ebx
+	mull %ebx
+	movl %eax, x
+	
+	xorl %ecx, %ecx
+	movl %ecx, indexf
+	
+et_forstrtok:
+
+	pushl $delim
+	pushl $0
+	call strtok
+	popl %ebx
+	popl %ebx
+	
+	cmp $0, %eax
+	je BKTF
+	
+	movl %eax, res
+	pushl res
+	call atoi
+	popl %ebx
+	
+	# iau al doilea nr introdus (distanta dintre elemente m)
+	movl M, %edx
+	cmp $0, %edx
+	je et_M
+	
+	movl indexf, %ecx
+	movl %eax, (%edi, %ecx, 4)
+	incl %ecx
+	movl %ecx, indexf
+	
+	cmp $0, %eax
+	jne frecventa
+	
+	jmp et_forstrtok
+
+et_M:
+	movl %eax, M
+	jmp et_forstrtok
+	
+	
+frecventa: 
+
+	# pun numarul in vectorul de frecventa daca este mai mare decat 0
+	
+	lea fr, %esi
+	movl %eax, %ecx
+	movl (%esi, %ecx, 4), %ebx
+	incl %ebx
+	movl %ebx, (%esi, %ecx, 4) 
+
+	jmp et_forstrtok
+	
+BKTF:
+	pushl $0
+	call bkt
+	popl %ebx
+	movl ok, %ebx
+	cmp $0, %ebx
+	je afisareminus
+	
+	jmp exit
+	
+afisareminus:
+	
+	pushl $-1
+	pushl $formatPrintfd
+	call printf
+	popl %ebx
+	popl %ebx
+	
+	pushl $endl
+	pushl $formatPrintfs
+	call printf
+	popl %ebx
+	popl %ebx
+
+exit:
+	
+	movl $1, %eax
+	xorl %ebx, %ebx
+	int $0x80	
+	
