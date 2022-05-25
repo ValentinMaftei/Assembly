@@ -31,10 +31,10 @@ nrLinii nrColoane nrLinii*nrColoane_elemente
 
 Operatiile pe care le putem utiliza pe matrice sunt:
 
-• add - adunam toate elementele din matrice cu valoarea operandului;<\br>
-• sub - scadem din toate elementele din matrice valoarea operandului;<\br>
-• mul - inmultim toate elementele din matrice cu valoarea operandului;<\br>
-• div - impartim toate elementele din matrice la valoarea operandului;<\br>
-• rot90d - rotim matricea la 90 de grade spre dreapta;<\br>
+• add - adunam toate elementele din matrice cu valoarea operandului <\br>
+• sub - scadem din toate elementele din matrice valoarea operandului <\br>
+• mul - inmultim toate elementele din matrice cu valoarea operandului <\br>
+• div - impartim toate elementele din matrice la valoarea operandului <\br>
+• rot90d - rotim matricea la 90 de grade spre dreapta <\br>
 
 Un exemplu de input poate fi: *x 2 3 1 2 3 4 5 6 let x -2* add sau: *x 2 3 -1 0 1 2 3 4 let rot90d*
