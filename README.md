@@ -43,7 +43,7 @@ Operatiile pe care le putem utiliza pe matrice sunt:
 • rot90d - rotim matricea la 90 de grade spre dreapta
 ```
 
-Un exemplu de input poate fi: ```*x 2 3 1 2 3 4 5 6 let x -2* add ``` sau: ```*x 2 3 -1 0 1 2 3 4 let rot90d*```
+Un exemplu de input poate fi: ```x 2 3 1 2 3 4 5 6 let x -2 add ``` sau: ```x 2 3 -1 0 1 2 3 4 let rot90d```
 
 
 # Reverse polish notation
@@ -82,4 +82,4 @@ The operations that can be used on the matrix are:
 • rot90d - rotate the matrix 90 degrees to the right
 ```
 
-An example of input can be: ```*x 2 3 1 2 3 4 5 6 let x -2* add``` or: ```*x 2 3 -1 0 1 2 3 4 let rot90d*```
+An example of input can be: ```x 2 3 1 2 3 4 5 6 let x -2 add``` or: ```x 2 3 -1 0 1 2 3 4 let rot90d```
